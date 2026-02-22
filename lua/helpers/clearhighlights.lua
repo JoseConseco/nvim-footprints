@@ -21,6 +21,7 @@ end
 --- Clear highlights for a group in all buffers across all tabpages/windows
 --- @param group_name string highlight group name
 function M.ClearHighlightsInAllBuffers(group_name)
+  local savedWin = vim.api.nvim_get_current_win() 
   for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
     local tab_windows = vim.api.nvim_tabpage_list_wins(tabpage)
     for _, win in ipairs(tab_windows) do
@@ -30,8 +31,7 @@ function M.ClearHighlightsInAllBuffers(group_name)
       end
     end
   end
-  -- Restore original window
-  vim.cmd("wincmd p")
+  vim.api.nvim_set_current_win(savedWin)
 end
 
 return M
