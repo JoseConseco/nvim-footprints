@@ -2,10 +2,15 @@ local M = {}
 
 local is_error_message_shown = false
 
+local function get_namespace(group_name)
+  return vim.api.nvim_create_namespace("nvim-footprints-" .. group_name)
+end
+
 --- Update footprint matches with gradient highlights
 function M.UpdateMatches(group_name, bufnr, line_numbers, history_depth)
   local current_line = vim.fn.line(".")
-  require("helpers.clearhighlights").ClearHighlights(group_name)
+  require("helpers.clearhighlights").ClearHighlights(group_name, bufnr)
+  local namespace = get_namespace(group_name)
 
   local max_i = math.min(#line_numbers, history_depth)
 
@@ -18,12 +23,24 @@ function M.UpdateMatches(group_name, bufnr, line_numbers, history_depth)
                vim.log.levels.WARN)
   end
 
-  -- Add matches for each line (newest at top)
-  for i = 0, max_i - 1 do
-    local line_nr = line_numbers[i + 1]  -- Lua 1-indexed
+  -- Add extmarks for each unique line (newest first), tinting only the number column.
+  local seen_lines = {}
+  local step = 0
+  for i = 1, max_i do
+    local line_nr = line_numbers[i]
     if vim.g.footprintsOnCurrentLine or line_nr ~= current_line then
-      local highlight_group = group_name .. (max_i - i - 1)
-      pcall(vim.fn.matchadd, highlight_group, "\\%" .. line_nr .. "l", -100009)
+      if line_nr and not seen_lines[line_nr] then
+        seen_lines[line_nr] = true
+        local highlight_group = group_name .. step
+        pcall(vim.api.nvim_buf_set_extmark, bufnr, namespace, line_nr - 1, 0, {
+          number_hl_group = highlight_group,
+          priority = 200,
+        })
+        step = step + 1
+        if step >= history_depth then
+          break
+        end
+      end
     end
   end
 end

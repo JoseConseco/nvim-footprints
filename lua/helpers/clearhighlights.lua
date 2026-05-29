@@ -1,34 +1,22 @@
 local M = {}
 
---- Get match IDs for a highlight group
---- @param group_name string highlight group name (regex pattern)
---- @return table<number> list of match IDs
-local function get_matches(group_name)
-  local matches = vim.fn.getmatches()
-  return vim.tbl_filter(function(match)
-    return string.match(match.group, group_name)
-  end, matches)
+local function get_namespace(group_name)
+  return vim.api.nvim_create_namespace("nvim-footprints-" .. group_name)
 end
 
---- Clear highlights for a group in current window
---- @param group_name string highlight group name
-function M.ClearHighlights(group_name)
-  for _, match in ipairs(get_matches(group_name)) do
-    pcall(vim.fn.matchdelete, match.id)
-  end
+--- @param bufnr? number buffer id (defaults to current buffer)
+function M.ClearHighlights(group_name, bufnr)
+  local target_bufnr = bufnr or vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_clear_namespace(target_bufnr, get_namespace(group_name), 0, -1)
 end
 
---- Clear highlights for a group in all buffers across all tabpages/windows
---- @param group_name string highlight group name
 function M.ClearHighlightsInAllBuffers(group_name)
-  -- for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
-  local tab_windows = vim.api.nvim_tabpage_list_wins(0)
-  for _, win in ipairs(tab_windows) do
-    for _, match in ipairs(get_matches(group_name)) do
-      pcall(vim.fn.matchdelete, match.id)
+  local namespace = get_namespace(group_name)
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(bufnr) then
+      vim.api.nvim_buf_clear_namespace(bufnr, namespace, 0, -1)
     end
   end
-  -- end
 end
 
 return M

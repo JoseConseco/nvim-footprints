@@ -1,8 +1,17 @@
 local M = {}
 
-local function get_normal_bg()
-  local normal_hl = vim.api.nvim_get_hl(0, { name = "normal" })
-  return normal_hl.bg and string.format("#%06x", normal_hl.bg) or "#000000"
+local function color_number_to_hex(color)
+  return color and string.format("#%06x", color) or nil
+end
+
+local function get_base_highlight()
+  local line_nr_hl = vim.api.nvim_get_hl(0, { name = "LineNr", link = false })
+  local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+
+  return {
+    bg = color_number_to_hex(line_nr_hl.bg) or color_number_to_hex(normal_hl.bg) or "#000000",
+    fg = color_number_to_hex(line_nr_hl.fg) or color_number_to_hex(normal_hl.fg) or "#ffffff",
+  }
 end
 
 local function get_intermediate(
@@ -39,15 +48,15 @@ function M.DeclareHighlights(
   accentTermColorStr --[[ string ]],
   totalSteps --[[ number ]]
 )
-  local normal_bg = get_normal_bg()
+  local base_hl = get_base_highlight()
   
-  -- Create gradient highlights
+  -- Create gradient highlights for number column.
   for i = 0, totalSteps - 1 do
-    local color = get_intermediate_color(accentColorStr, normal_bg, i, totalSteps)
+    local color = get_intermediate_color(accentColorStr, base_hl.bg, i, totalSteps)
     vim.api.nvim_set_hl(
       0,
       groupName .. i,
-      { bg = color, ctermbg = tonumber(accentTermColorStr) }
+      { bg = color, fg = base_hl.fg, bold = true, ctermbg = tonumber(accentTermColorStr) }
     )
   end
   
