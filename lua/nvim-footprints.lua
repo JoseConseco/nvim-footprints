@@ -12,9 +12,9 @@ local function get_is_enabled()
 end
 
 local function should_update_matches()
-  return get_is_enabled() 
-    and vim.bo.modifiable 
-    and not vim.wo.diff 
+  return get_is_enabled()
+    and vim.bo.modifiable
+    and not vim.wo.diff
     and not vim.tbl_contains(vim.g.footprintsExcludeFiletypes, vim.bo.filetype)
 end
 
@@ -131,7 +131,10 @@ local augroup = vim.api.nvim_create_augroup("footprints", { clear = true })
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   group = augroup,
-  callback = function() M.FootprintsInit() end,
+  callback = function()
+    -- M.FootprintsInit()
+    vim.schedule(function() M.FootprintsInit() end) -- Schedule to ensure it runs after the colorscheme is fully applied
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
