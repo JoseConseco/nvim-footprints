@@ -12,7 +12,7 @@ If you use vim8, you should use branch [vim8](https://github.com/axlebedev/vim-f
 
 ### DEMO
 
-https://user-images.githubusercontent.com/3949614/158836795-809abfeb-1e6a-4af9-8129-6ba278376bd3.mp4
+https://github.com/user-attachments/assets/eec78c77-7ed1-418d-889b-99f6a86a772c
 
 ---
 
