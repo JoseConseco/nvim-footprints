@@ -33,11 +33,11 @@ local function get_intermediate_color(
 )
   local a_r, a_g, a_b = tonumber(accentColorStr:sub(2,3), 16), tonumber(accentColorStr:sub(4,5), 16), tonumber(accentColorStr:sub(6,7), 16)
   local n_r, n_g, n_b = tonumber(normalColorStr:sub(2,3), 16), tonumber(normalColorStr:sub(4,5), 16), tonumber(normalColorStr:sub(6,7), 16)
-  
+
   local r = math.floor(get_intermediate(a_r, n_r, step, totalSteps) + 0.5)
   local g = math.floor(get_intermediate(a_g, n_g, step, totalSteps) + 0.5)
   local b = math.floor(get_intermediate(a_b, n_b, step, totalSteps) + 0.5)
-  
+
   return string.format("#%02x%02x%02x", r, g, b)
 end
 
@@ -49,17 +49,18 @@ function M.DeclareHighlights(
   totalSteps --[[ number ]]
 )
   local base_hl = get_base_highlight()
-  
+
   -- Create gradient highlights for number column.
   for i = 0, totalSteps - 1 do
     local color = get_intermediate_color(accentColorStr, base_hl.bg, i, totalSteps)
     vim.api.nvim_set_hl(
       0,
       groupName .. i,
-      { bg = color, fg = base_hl.fg, bold = true, ctermbg = tonumber(accentTermColorStr) }
+      -- { bg = color, fg = base_hl.fg, bold = true, ctermbg = tonumber(accentTermColorStr) }
+      { bg = color, bold = true, ctermbg = tonumber(accentTermColorStr) }
     )
   end
-  
+
   -- Clear any remaining highlights
   local i = totalSteps
   while vim.fn.hlexists(groupName .. i) == 1 do
