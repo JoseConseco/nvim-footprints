@@ -18,15 +18,20 @@ https://github.com/user-attachments/assets/eec78c77-7ed1-418d-889b-99f6a86a772c
 
 ### INSTALLATION
 Example of installation and setting configs
-```
-  Plug 'axlebedev/footprints'
-  g:footprintsColor = '#3A3A3A'
-  g:footprintsTermColor = '208'
-  g:footprintsEasingFunction = 'linear'
-  g:footprintsHistoryDepth = 20
-  g:footprintsExcludeFiletypes = ['magit', 'nerdtree', 'diff']
-  g:footprintsEnabledByDefault = 1
-  g:footprintsOnCurrentLine = 0
+```lua
+  {
+
+    "JoseConseco/nvim-footprints",
+    branch = "/tree/feature/number-line-highlights",
+    end,
+    opts = {
+      footprintsColor = "#00c0f0",
+      footprintsOnCurrentLine = 0,
+      footprintsEasingFunction = "easeinout",
+      footprintsHistoryDepth = 10,
+    },
+  },
+
 ```
 
 ---
