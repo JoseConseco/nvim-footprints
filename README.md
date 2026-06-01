@@ -22,7 +22,7 @@ Example of installation and setting configs
   {
 
     "JoseConseco/nvim-footprints",
-    branch = "/tree/feature/number-line-highlights",
+    branch = "feature/number-line-highlights",
     end,
     opts = {
       footprintsColor = "#00c0f0",
